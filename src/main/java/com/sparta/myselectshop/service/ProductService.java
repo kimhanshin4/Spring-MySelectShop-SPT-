@@ -4,6 +4,7 @@ import com.sparta.myselectshop.dto.*;
 import com.sparta.myselectshop.entity.*;
 import com.sparta.myselectshop.repository.*;
 import jakarta.validation.constraints.*;
+import java.util.*;
 import lombok.*;
 import org.springframework.stereotype.*;
 import org.springframework.transaction.annotation.*;
@@ -29,5 +30,14 @@ public class ProductService {
         );
         product.update(requestDto);
         return new ProductResponseDto(product);
+    }
+
+    public List<ProductResponseDto> getProducts() {
+        List<Product> productsList = productRepository.findAll();
+        List<ProductResponseDto> responseDtoList = new ArrayList<>();
+        for (Product product : productsList) {
+            responseDtoList.add(new ProductResponseDto(product));
+        }
+        return responseDtoList;
     }
 }
