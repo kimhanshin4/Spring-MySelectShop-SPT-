@@ -2,6 +2,7 @@ package com.sparta.myselectshop.service;
 
 import com.sparta.myselectshop.dto.*;
 import com.sparta.myselectshop.entity.*;
+import com.sparta.myselectshop.naver.dto.*;
 import com.sparta.myselectshop.repository.*;
 import jakarta.validation.constraints.*;
 import java.util.*;
@@ -39,5 +40,13 @@ public class ProductService {
             responseDtoList.add(new ProductResponseDto(product));
         }
         return responseDtoList;
+    }
+
+    @Transactional
+    public void updateBySearch(Long id, ItemDto itemDto) {
+        Product product = productRepository.findById(id).orElseThrow(()->
+            new NullPointerException("해당 상품은 지금 없어요!")
+        );
+        product.updateByItemDto(itemDto);
     }
 }
