@@ -4,7 +4,6 @@ import com.sparta.myselectshop.dto.*;
 import com.sparta.myselectshop.entity.*;
 import com.sparta.myselectshop.naver.dto.*;
 import com.sparta.myselectshop.repository.*;
-import jakarta.validation.constraints.*;
 import java.util.*;
 import lombok.*;
 import org.springframework.stereotype.*;
@@ -16,8 +15,8 @@ public class ProductService {
     private final ProductRepository productRepository;
     public static final int MIN_MY_PRICE = 100;
 
-    public ProductResponseDto createProduct(ProductRequestDto requestDto) {
-        Product product = productRepository.save(new Product(requestDto));
+    public ProductResponseDto createProduct(ProductRequestDto requestDto, User user) {
+        Product product = productRepository.save(new Product(requestDto,user));
         return new ProductResponseDto(product);
     }
 @Transactional
@@ -33,8 +32,8 @@ public class ProductService {
         return new ProductResponseDto(product);
     }
 
-    public List<ProductResponseDto> getProducts() {
-        List<Product> productsList = productRepository.findAll();
+    public List<ProductResponseDto> getProducts(User user) {
+        List<Product> productsList = productRepository.findAllByUser(user);
         List<ProductResponseDto> responseDtoList = new ArrayList<>();
         for (Product product : productsList) {
             responseDtoList.add(new ProductResponseDto(product));
@@ -48,5 +47,14 @@ public class ProductService {
             new NullPointerException("해당 상품은 지금 없어요!")
         );
         product.updateByItemDto(itemDto);
+    }
+
+    public List<ProductResponseDto> getAllProducts() {
+        List<Product> productsList = productRepository.findAll(); //Admin계정은 모두 조회 가능하게
+        List<ProductResponseDto> responseDtoList = new ArrayList<>();
+        for (Product product : productsList) {
+            responseDtoList.add(new ProductResponseDto(product));
+        }
+        return responseDtoList;
     }
 }
