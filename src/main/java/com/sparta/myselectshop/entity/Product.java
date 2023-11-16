@@ -3,6 +3,7 @@ package com.sparta.myselectshop.entity;
 import com.sparta.myselectshop.dto.*;
 import com.sparta.myselectshop.naver.dto.*;
 import jakarta.persistence.*;
+import java.util.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -37,6 +38,8 @@ public class Product extends Timestamped {
     @JoinColumn(name = "user_id",nullable = false)
     private User user;
 
+    @OneToMany(mappedBy = "product")
+    private List<ProductFolder> ProductFolderList = new ArrayList<>();
     public Product(ProductRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();
         this.image = requestDto.getImage();
