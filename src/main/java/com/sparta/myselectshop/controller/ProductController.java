@@ -1,6 +1,7 @@
 package com.sparta.myselectshop.controller;
 
 import com.sparta.myselectshop.dto.*;
+import com.sparta.myselectshop.entity.*;
 import com.sparta.myselectshop.security.*;
 import com.sparta.myselectshop.service.*;
 import lombok.*;
@@ -16,13 +17,15 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping("/products")
-    public ProductResponseDto createProduct(@RequestBody ProductRequestDto requestDto, @AuthenticationPrincipal
-        UserDetailsImpl userDetails){
-        return productService.createProduct(requestDto,userDetails.getUser());
+    public ProductResponseDto createProduct(@RequestBody ProductRequestDto requestDto,
+        @AuthenticationPrincipal
+        UserDetailsImpl userDetails) {
+        return productService.createProduct(requestDto, userDetails.getUser());
     }
 
     @PutMapping("/products/{id}")
-    public ProductResponseDto updateProduct(@PathVariable Long id, @RequestBody ProductMypriceRequestDto requestDto){
+    public ProductResponseDto updateProduct(@PathVariable Long id,
+        @RequestBody ProductMypriceRequestDto requestDto) {
         return productService.updateProduct(id, requestDto);
     }
 
@@ -32,10 +35,19 @@ public class ProductController {
         @RequestParam("size") int size,
         @RequestParam("sortBy") String sortBy,
         @RequestParam("isAsc") boolean isAsc,
-        @AuthenticationPrincipal UserDetailsImpl userDetails){
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return productService.getProducts(userDetails.getUser(),
-            page-1, size, sortBy,isAsc
-            );
+            page - 1, size, sortBy, isAsc
+        );
+    }
+
+    @PostMapping("/products/{productId}/folder")
+    public void addFolder(
+        @PathVariable Long productId,
+        @RequestParam Long folderId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        productService.addFolder(productId, folderId, userDetails.getUser());
     }
 
 
