@@ -20,10 +20,12 @@ public class ProductController {
         UserDetailsImpl userDetails){
         return productService.createProduct(requestDto,userDetails.getUser());
     }
+
     @PutMapping("/products/{id}")
     public ProductResponseDto updateProduct(@PathVariable Long id, @RequestBody ProductMypriceRequestDto requestDto){
         return productService.updateProduct(id, requestDto);
     }
+
     @GetMapping("/products")
     public Page<ProductResponseDto> getProducts(
         @RequestParam("page") int page,
