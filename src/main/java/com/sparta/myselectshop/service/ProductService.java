@@ -6,6 +6,7 @@ import com.sparta.myselectshop.naver.dto.*;
 import com.sparta.myselectshop.repository.*;
 import java.util.*;
 import lombok.*;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.*;
 import org.springframework.transaction.annotation.*;
 
@@ -32,13 +33,22 @@ public class ProductService {
         return new ProductResponseDto(product);
     }
 
-    public List<ProductResponseDto> getProducts(User user) {
-        List<Product> productsList = productRepository.findAllByUser(user);
-        List<ProductResponseDto> responseDtoList = new ArrayList<>();
-        for (Product product : productsList) {
-            responseDtoList.add(new ProductResponseDto(product));
+    public Page<ProductResponseDto> getProducts(User user, int page, int size, String sortBy,
+        boolean isAsc) {
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        Pageable pageable = PageRequest.of(page,size,sort);
+
+        UserRoleEnum userRoleEnum = user.getRole();
+
+        Page<Product> productList;
+
+        if(userRoleEnum == UserRoleEnum.USER) {
+            productList = productRepository.findAllByUser(user, pageable);
+        } else {
+            productList = productRepository.findAll(pageable);
         }
-        return responseDtoList;
+        return productList.map(ProductResponseDto::new);
     }
 
     @Transactional
@@ -49,12 +59,5 @@ public class ProductService {
         product.updateByItemDto(itemDto);
     }
 
-    public List<ProductResponseDto> getAllProducts() {
-        List<Product> productsList = productRepository.findAll(); //Admin계정은 모두 조회 가능하게
-        List<ProductResponseDto> responseDtoList = new ArrayList<>();
-        for (Product product : productsList) {
-            responseDtoList.add(new ProductResponseDto(product));
-        }
-        return responseDtoList;
-    }
+
 }
