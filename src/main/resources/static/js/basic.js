@@ -140,7 +140,8 @@ function addHTML(itemDto) {
             </div>
         </div>
         <div class="search-itemDto-right">
-            <img src="../images/icon-save.png" alt="" onclick='addProduct(${JSON.stringify(itemDto)})'>
+            <img src="../images/icon-save.png" alt="" onclick='addProduct(${JSON.stringify(
+      itemDto)})'>
         </div>
     </div>`
 }
@@ -184,7 +185,7 @@ function showProduct(folderId = null) {
 
   if (folderId) {
     dataSource = `/api/folders/${folderId}/products?sortBy=${sorting}&isAsc=${isAsc}`;
-  } else if(folderTargetId === undefined) {
+  } else if (folderTargetId === undefined) {
     dataSource = `/api/products?sortBy=${sorting}&isAsc=${isAsc}&folderId=${folderId}`;
   } else {
     dataSource = `/api/folders/${folderTargetId}/products?sortBy=${sorting}&isAsc=${isAsc}`;
@@ -286,7 +287,7 @@ function addFolder() {
       folderNames
     })
   }).done(function (data, textStatus, xhr) {
-    if(data !== '') {
+    if (data !== '') {
       alert("중복된 폴더입니다.");
       return;
     }
@@ -294,7 +295,7 @@ function addFolder() {
     alert('성공적으로 등록되었습니다.');
     window.location.reload();
   })
-  .fail(function(xhr, textStatus, errorThrown) {
+  .fail(function (xhr, textStatus, errorThrown) {
     alert("중복된 폴더입니다.");
   });
 }
@@ -320,7 +321,8 @@ function addProductItem(product) {
                         <div class="lprice">
                             <span>${numberWithCommas(product.lprice)}</span>원
                         </div>
-                        <div class="isgood ${product.lprice > product.myprice ? 'none' : ''}">
+                        <div class="isgood ${product.lprice > product.myprice
+      ? 'none' : ''}">
                             최저가
                         </div>
                     </div>
@@ -342,7 +344,8 @@ function addInputForProductToFolder(productId, button) {
     type: 'GET',
     url: `/api/folders`,
     success: function (folders) {
-      const options = folders.map(folder => `<option value="${folder.id}">${folder.name}</option>`)
+      const options = folders.map(
+          folder => `<option value="${folder.id}">${folder.name}</option>`)
       const form = `
                 <span>
                     <form id="folder-select" method="post" autocomplete="off" action="/api/products/${productId}/folder">
@@ -362,14 +365,14 @@ function addInputForProductToFolder(productId, button) {
           url: $(this).prop('action'),
           data: $(this).serialize(),
         }).done(function (data, textStatus, xhr) {
-          if(data !== '') {
+          if (data !== '') {
             alert("중복된 폴더입니다.");
             return;
           }
           alert('성공적으로 등록되었습니다.');
           window.location.reload();
         })
-        .fail(function(xhr, textStatus, errorThrown) {
+        .fail(function (xhr, textStatus, errorThrown) {
           alert("중복된 폴더입니다.");
         });
       });
@@ -428,10 +431,16 @@ function logout() {
 }
 
 function getToken() {
+
   let auth = Cookies.get('Authorization');
 
-  if(auth === undefined) {
+  if (auth === undefined) {
     return '';
+  }
+
+  // kakao 로그인 사용한 경우 Bearer 추가
+  if (auth.indexOf('Bearer') === -1 && auth !== '') {
+    auth = 'Bearer ' + auth;
   }
 
   return auth;
