@@ -2,10 +2,12 @@ package com.sparta.myselectshop.service;
 
 import com.sparta.myselectshop.dto.*;
 import com.sparta.myselectshop.entity.*;
+import com.sparta.myselectshop.exception.*;
 import com.sparta.myselectshop.naver.dto.*;
 import com.sparta.myselectshop.repository.*;
 import java.util.*;
 import lombok.*;
+import org.springframework.context.*;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.*;
 import org.springframework.transaction.annotation.*;
@@ -17,6 +19,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductFolderRepository productFolderRepository;
     private final FolderRepository folderRepository;
+    private final MessageSource messageSource;
     public static final int MIN_MY_PRICE = 100;
 
     public ProductResponseDto createProduct(ProductRequestDto requestDto, User user) {
@@ -29,10 +32,18 @@ public class ProductService {
         int myprice = requestDto.getMyprice();
         if (myprice < MIN_MY_PRICE) {
             throw new IllegalArgumentException(
-                "유효하지 않은 관심 가격 감지되었습니다. 최소 " + MIN_MY_PRICE + "원 이상으로 설정하세요.");
+                messageSource.getMessage(
+                    "below.min.my.price", new Integer[]{MIN_MY_PRICE}, "Wrong Price",
+                    Locale.getDefault()
+                ));
         }
         Product product = productRepository.findById(id).orElseThrow(() ->
-            new NullPointerException("해당 상품을 찾을 수가 없어버립니다.")
+            new ProductNotFoundException(messageSource.getMessage(
+                "not.found.product",
+                null,
+                "Not Found Product",
+                Locale.getDefault()
+            ))
         );
         product.update(requestDto);
         return new ProductResponseDto(product);
