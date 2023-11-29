@@ -10,18 +10,20 @@ import org.springframework.stereotype.*;
 @Service
 @RequiredArgsConstructor
 public class FolderService {
-private final FolderRepository folderRepository;
+
+    private final FolderRepository folderRepository;
+
     public void addFolders(List<String> folderNames, User user) {
         List<Folder> existFolderList = folderRepository.findAllByUserAndNameIn(user, folderNames);
 
         List<Folder> folderList = new ArrayList<>();
 
         for (String folderName : folderNames) {
-            if (!isExistFolderName(folderName, existFolderList)){
+            if (!isExistFolderName(folderName, existFolderList)) {
                 Folder folder = new Folder(folderName, user);
                 folderList.add(folder);
             } else {
-                throw new IllegalArgumentException("폴더명이 중복이잖아요!");
+                throw new IllegalArgumentException("중복된 폴더명을 제거해주세요! 폴더명: " + folderName);
             }
         }
         folderRepository.saveAll(folderList);
@@ -36,9 +38,10 @@ private final FolderRepository folderRepository;
         }
         return responseDtoList;
     }
+
     private boolean isExistFolderName(String folderName, List<Folder> existFolderList) {
         for (Folder exsistFolder : existFolderList) {
-            if(folderName.equals(exsistFolder.getName())) {
+            if (folderName.equals(exsistFolder.getName())) {
                 return true;
             }
         }
